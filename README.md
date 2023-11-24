@@ -1,3 +1,19 @@
+Backend Warongwarem
+
+Backend Warongwarem adalah sebuah sistem backend yang dapat digunakan untuk mengelola reservasi meja dan interaksi antar pelanggan dan manajer. Sistem ini dibangun menggunakan bahasa pemrograman PHP dan framework Laravel.
+
+Fitur-fitur
+
+Reservasi meja
+Interaksi antar pelanggan dan manajer
+Reservasi meja
+
+Pelanggan dapat melakukan reservasi meja melalui situs web atau aplikasi seluler. Manajer dapat menerima atau menolak reservasi meja.
+
+Interaksi antar pelanggan dan manajer
+
+Pelanggan dan manajer dapat saling berinteraksi melalui fitur pesan. Pelanggan dapat mengajukan pertanyaan atau keluhan kepada manajer, dan manajer dapat membalas pertanyaan atau keluhan tersebut.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
