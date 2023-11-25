@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('reservation')) return;
+
         Schema::create('reservation', function (Blueprint $table) {
             $table->id('reservation_id');
             $table->string('table_type');
@@ -19,8 +21,10 @@ return new class extends Migration
             $table->date('date');
             $table->string('phone_number');
             $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->foreign('customer_id')->references('customer_id')->on('customers');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
     }
 
