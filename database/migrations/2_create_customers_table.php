@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('manager', function (Blueprint $table) {
-            $table->id('manager_id');
+        if (Schema::hasTable('customers')) return;
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id('customer_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('username');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
     }
 
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('manager');
+        Schema::dropIfExists('customers');
     }
 };
