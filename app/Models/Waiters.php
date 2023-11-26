@@ -12,5 +12,6 @@ class Waiters extends Model
     protected $tables = 'waiters';
     protected $fillable = [
         'username',
+        'user_id'
     ];
 }
