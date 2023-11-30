@@ -22,7 +22,7 @@ class ReservationController extends Controller
         $reservation->time = $request->time;
         $reservation->date = $request->date;
         $reservation->phone_number = $request->phone_number;
-        $reservation->customer_id = $request->customer_id;
+        $reservation->user_id = $request->user_id;
         $reservation->save();
 
         return response()->json([

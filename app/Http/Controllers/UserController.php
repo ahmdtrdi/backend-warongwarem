@@ -25,7 +25,8 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user
-        ]);
+            'user' => $user,
+            'role' => $roles[$request->role] 
+         ]);
     }
 }
