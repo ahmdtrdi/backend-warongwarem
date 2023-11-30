@@ -22,10 +22,8 @@ return new class extends Migration
             $table->date('date');
             $table->string('phone_number');
             $table->string('status')->default('Pending');
-            $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
-            $table->foreign('customer_id')->references('customer_id')->on('customers');
             $table->foreign('user_id')->references('user_id')->on('users');
         });
     }
