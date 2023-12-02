@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +17,14 @@ use App\Http\Controllers\ReservationController;
 |
 */
 
+// Routes APIs with middleware secure//
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
+Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
 
+// Routes APIs Reservations //
 Route::get('/reservations', [ReservationController::class, 'index']);
+Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 Route::post('/reservations', [ReservationController::class, 'store']);
