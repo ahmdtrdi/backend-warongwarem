@@ -17,6 +17,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $reservation = new Reservation;
+        $reservation->name = $request->name;
         $reservation->table_type = $request->table_type;
         $reservation->people = $request->people;
         $reservation->time = $request->time;
