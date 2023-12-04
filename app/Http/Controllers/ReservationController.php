@@ -14,6 +14,22 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
+    public function show($id)
+    {
+        $reservation = Reservation::find($id);
+        return $reservation;
+    }
+
+    public function userReservations(Request $request)
+    {
+        // Get the user's ID from the request
+        $userId = $request->user()->id;
+        // Retrieve the reservatisons made by the user
+        $reservations = Reservation::where('user_id', $userId)->get();
+        // Return the reservations as a JSON response
+        return response()->json($reservations);
+    }
+
     public function store(Request $request)
     {
         $reservation = new Reservation;
@@ -28,8 +44,12 @@ class ReservationController extends Controller
 
         return response()->json([
             'message' => 'Reservation created successfully',
-            'reservation' => $reservation
+            'reservation, 201' => $reservation
         ]);
     }
-
+    public function delete(Reservation $reservation)
+    {
+        $reservation->delete();
+        return response()->json(null, 204);
+    }
 }
