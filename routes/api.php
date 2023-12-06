@@ -17,12 +17,13 @@ use App\Http\Controllers\RegisterController;
 |
 */
 
-// Routes APIs with middleware secure//
+// Routes APIs with middleware secure //
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
 Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
+Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
 
 // Routes APIs Reservations //
 Route::get('/reservations', [ReservationController::class, 'index']);
