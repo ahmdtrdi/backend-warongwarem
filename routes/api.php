@@ -26,6 +26,6 @@ Route::post('/auth/register', [UserController::class, 'register'])->middleware('
 Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
 
 // Routes APIs Reservations //
-Route::get('/reservations', [ReservationController::class, 'index']);
+Route::get('/reservations/list', [ReservationController::class, 'index']);
 Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 Route::post('/reservations', [ReservationController::class, 'store']);
