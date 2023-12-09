@@ -11,10 +11,8 @@ use App\Models\User;
 class UserController extends Controller {
     public function register(Request $request) {
         $user = new User;
-        $user->username = $request->username;
-        $user->password = Hash::make($request->password);
-        $user->name = $request->name;
         $user->email = $request->email;
+        $user->password = Hash::make($request->password);
 
         // Map indices to roles
         $roles = [1 => 'customer', 2 => 'waiter', 3 => 'manager'];
