@@ -6,7 +6,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\User;
+
 
 class UserController extends Controller {
     public function register(Request $request) {
@@ -17,15 +19,22 @@ class UserController extends Controller {
         // Map indices to roles
         $roles = [1 => 'customer', 2 => 'waiter', 3 => 'manager'];
 
-        // Set role from request data
-        $user->role = $roles[$request->role];
+        //set default value role
+        $role = 1;
 
+        if (Str::endsWith($request->email, '@warongwarem.co.id')) {
+            $role = 3; // manager
+        } elseif (Str::endsWith($request->email, '@waiters.warongwarem.co.id')) {
+            $role = 2; // waiter
+        }
+        // Set role
+        $user->role = $roles[$role];
         $user->save();
 
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
-            'role' => $roles[$request->role]
+            'role' => $roles[$role]
         ]);
     }
 
