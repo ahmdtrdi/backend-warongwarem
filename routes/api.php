@@ -23,8 +23,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
 Route::middleware('auth:api')->get('/user/reservations/{id}', [ReservationController::class, 'viewReservation']);
+Route::middleware('auth:api')->get('/tables/available', [TableController::class, 'viewAvailableTables']);
 Route::middleware('auth:api')->put('/reservations/{id}/status', [ReservationController::class, 'updateStatus']);
 Route::middleware('auth:api')->put('/reservations/{id}/reschedule', [ReservationController::class, 'reschedule']);
+Route::middleware('auth:api')->put('/tables/{id}/assign/{reservationId}', [TableController::class, 'assignTable']);
+Route::middleware('auth:api')->put('/tables/{id}/available', [TableController::class, 'unassignTable']);
 Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
 Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
 
