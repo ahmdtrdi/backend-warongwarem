@@ -56,8 +56,8 @@ class ReservationController extends Controller
         return response()->json(null, 204);
     }
 
-    public function viewReservation(Request $request, $id)
-{
+     public function viewReservation(Request $request, $id)
+    {
     // Get the user's ID from the request
     $userId = $request->user()->id;
     // Retrieve the reservation made by the user
@@ -75,26 +75,31 @@ class ReservationController extends Controller
     } else {
         return response()->json(['error' => 'Reservasi tidak ditemukan'], 404);
     }
-}
+    }
     public function updateStatus(Request $request, $id)
     {
-        // Cek apakah pengguna adalah manajer atau pelayan
-        if ($request->user()->role == 'manager' || $request->user()->role == 'waiter') {
-            $reservation = Reservation::find($id);
-            if ($reservation) {
+    // Cek apakah pengguna adalah manajer atau pelayan
+    if ($request->user()->role == 'manager' || $request->user()->role == 'waiter') {
+        $reservation = Reservation::find($id);
+        if ($reservation) {
+            if ($request->status == 'approved' && $reservation->status != 'paid') {
+                return response()->json(['error' => 'Reservasi harus berstatus paid sebelum dapat disetujui'], 403);
+            } else {
                 $reservation->status = $request->status; // status diambil dari request
                 $reservation->save();
                 return response()->json([
                     'message' => 'Status reservasi diperbarui',
                     'reservation' => $reservation
                 ]);
-            } else {
-                return response()->json(['error' => 'Reservasi tidak ditemukan'], 404);
             }
         } else {
-            return response()->json(['error' => 'Hanya manajer atau pelayan yang dapat memperbarui status reservasi'], 403);
+            return response()->json(['error' => 'Reservasi tidak ditemukan'], 404);
         }
+    } else {
+        return response()->json(['error' => 'Hanya manajer atau pelayan yang dapat memperbarui status reservasi'], 403);
     }
+    }
+
 
     public function reschedule(Request $request, $id)
     {
