@@ -34,6 +34,7 @@ class ReservationController extends Controller
     {
         $reservation = new Reservation;
         $reservation->name = $request->name;
+        $reservation->notes= $request->notes;
         $reservation->table_type = $request->table_type;
         $reservation->people = $request->people;
         $reservation->time = $request->time;
