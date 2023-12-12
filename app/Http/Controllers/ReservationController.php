@@ -57,7 +57,7 @@ class ReservationController extends Controller
         return response()->json(null, 204);
     }
 
-     public function viewReservation(Request $request, $id)
+     public function historyReservation(Request $request, $id)
     {
     // Get the user's ID from the request
     $userId = $request->user()->id;

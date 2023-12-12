@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
-Route::middleware('auth:api')->get('/user/reservations/{id}', [ReservationController::class, 'viewReservation']);
+Route::middleware('auth:api')->get('/user/reservations/{id}', [ReservationController::class, 'historyReservation']);
 Route::middleware('auth:api')->get('/tables/available', [TableController::class, 'viewAvailableTables']);
 Route::middleware('auth:api')->put('/reservations/{id}/status', [ReservationController::class, 'updateStatus']);
 Route::middleware('auth:api')->put('/reservations/{id}/reschedule', [ReservationController::class, 'reschedule']);
