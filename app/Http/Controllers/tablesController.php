@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Table;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ReservationController;
 
 class tablesController extends Controller
 {
