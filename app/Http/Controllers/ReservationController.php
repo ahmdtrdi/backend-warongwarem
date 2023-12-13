@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Reservation;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ReservationController extends Controller
 {
@@ -35,42 +36,38 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            // Validate the request data
-            $validatedData = $request->validate([
-                'name' => 'required|string',
-                'notes' => 'nullable|string',
-                'table_type' => 'required|string',
-                'people' => 'required|integer',
-                'time' => 'required|date_format:H:i:s',
-                'date' => 'required|date',
-                'phone_number' => 'required|string',
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'notes' => 'nullable|string',
+            'table_type' => 'required|string',
+            'people' => 'required|integer',
+            'time' => 'required|date_format:H:i:s',
+            'date' => 'required|date',
+            'phone_number' => 'required|string',
+        ]);
 
-            $reservation = new Reservation;
+        $user = null;
 
-            $reservation->name = $validatedData['name'];
-            $reservation->notes = $validatedData['notes'];
-            $reservation->table_type = $validatedData['table_type'];
-            $reservation->people = $validatedData['people'];
-            $reservation->time = $validatedData['time'];
-            $reservation->date = $validatedData['date'];
-            $reservation->phone_number = $validatedData['phone_number'];
+        // Check for JWT token in the request headers
+        if ($token = $request->header('Authorization')) {
+            $token = str_replace('Bearer ', '', $token);
 
-            $reservation['user_id'] = Auth::user()->id;
+            // Attempt to authenticate the user using the JWT token
+            try {
+                $user = JWTAuth::parseToken()->authenticate();
+            } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+                // Handle JWT exceptions here (e.g., token expired, invalid token)
+                return response()->json(['error' => 'Invalid token'], 401);
+            }
+        }
 
-            $reservation->save();
-
-            return response()->json([
-                'message' => 'Reservasi berhasil',
-                'reservation' => $reservation
-            ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation errors
-            return response()->json(['error' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Could not store reservation: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not store reservation'], 500);
+        if ($user) {
+            $validatedData['customer_id'] = $user->id;
+            $reservation = Reservation::create($validatedData);
+            return $reservation;
+        } else {
+            // Handle the case where no user is authenticated
+            return response()->json(['error' => 'Unauthenticated'], 401);
         }
     }
 
