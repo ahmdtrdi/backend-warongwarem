@@ -4,13 +4,22 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class Authenticate extends Middleware {
     /**
-     * Get the path the user should be redirected to when they are not authenticated.
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string[]  ...$guards
+     * @return mixed
      */
-    protected function redirectTo($request) {
+    public function handle($request, \Closure $next, ...$guards)
+    {
+        if ($this->authenticate($request, $guards) && $request->user()->tokenCan('token-name') && now()->lessThan($request->user()->token()->expires_at)) {
+            return $next($request);
+        }
+
         if($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }

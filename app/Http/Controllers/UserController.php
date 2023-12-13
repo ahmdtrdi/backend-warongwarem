@@ -12,6 +12,12 @@ use App\Models\User;
 
 class UserController extends Controller {
     public function register(Request $request) {
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'error' => 'Email already exists',
+            ], 422);
+        }
+
         $user = new User;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
@@ -44,7 +50,7 @@ class UserController extends Controller {
         if(Auth::attempt($credentials)) {
             // Authentication passed...
             $user = Auth::user();
-            $token = $user->createToken('token-name')->plainTextToken;
+            $token = $user->createToken('token-name', [], now()->addDays(7));
 
             return response()->json([
                 'user' => $user,
