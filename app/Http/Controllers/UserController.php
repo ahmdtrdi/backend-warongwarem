@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-
-class UserController extends Controller {
-    public function register(Request $request) {
+class UserController extends Controller
+{
+    public function register(Request $request)
+    {
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'error' => 'E-mail telah terdaftar',
@@ -44,21 +46,20 @@ class UserController extends Controller {
         ]);
     }
 
-    public function login(Request $request) {
+    // Login Controller
+    public function login(Request $request)
+    {
         $credentials = $request->only('email', 'password');
 
-        if(Auth::attempt($credentials)) {
-            // Authentication passed...
-            $user = Auth::user();
-            $token = $user->createToken('token-name', [], now()->addDays(7));
-
-            return response()->json([
-                'user' => $user,
-                'token' => $token,
-            ]);
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Authentication failed...
-        return response()->json(['error' => 'Invalid credentials'], 401);
+        return response()->json(['token' => $token]);
+    }
+    
+    public function me()
+    {
+        return response()->json(auth()->user());
     }
 }
