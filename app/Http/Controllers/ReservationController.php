@@ -35,42 +35,23 @@ class ReservationController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'notes' => 'nullable|string',
-            'table_type' => 'required|string',
-            'people' => 'required|integer',
-            'time' => 'required|date_format:H:i:s',
-            'date' => 'required|date',
-            'phone_number' => 'required|string',
-        ]);
+{
+    $validatedData = $request->validate([
+        'user_id' => 'required|integer|exists:users,id', // Add this line
+        'name' => 'required|string',
+        'notes' => 'nullable|string',
+        'table_type' => 'required|string',
+        'people' => 'required|integer',
+        'time' => 'required|date_format:H:i:s',
+        'date' => 'required|date',
+        'phone_number' => 'required|string',
+    ]);
 
-        $user = null;
-
-        // Check for JWT token in the request headers
-        if ($token = $request->header('Authorization')) {
-            $token = str_replace('Bearer ', '', $token);
-
-            // Attempt to authenticate the user using the JWT token
-            try {
-                $user = JWTAuth::parseToken()->authenticate();
-            } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-                // Handle JWT exceptions here (e.g., token expired, invalid token)
-                return response()->json(['error' => 'Invalid token'], 401);
-            }
-        }
-
-        if ($user) {
-            $validatedData['customer_id'] = $user->id;
-            $reservation = Reservation::create($validatedData);
-            return $reservation;
-        } else {
-            // Handle the case where no user is authenticated
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-    }
-
+   
+    $validatedData['customer_id'] = $validatedData['user_id'];
+    $reservation = Reservation::create($validatedData);
+    return $reservation;
+}
     public function delete(Reservation $reservation)
     {
         $reservation->delete();
