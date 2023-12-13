@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('reservation', function (Blueprint $table) {
             $table->id('reservation_id');
             $table->string('name');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->string('table_type');
             $table->integer('people');
             $table->time('time');
@@ -24,8 +24,10 @@ return new class extends Migration
             $table->string('phone_number');
             $table->string('status')->default('unpaid');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('table_id')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('table_id')->references('table_id')->on('table_list');
         });
     }
 

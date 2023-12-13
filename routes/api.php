@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\tablesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,13 +24,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
 Route::middleware('auth:api')->get('/user/reservations/{id}', [ReservationController::class, 'historyReservation']);
-Route::middleware('auth:api')->get('/tables/available', [TableController::class, 'viewAvailableTables']);
+//Route::middleware('auth:api')->get('/tables/available', [TableController::class, 'viewAvailableTables']);
 Route::middleware('auth:api')->put('/reservations/{id}/status', [ReservationController::class, 'updateStatus']);
 Route::middleware('auth:api')->put('/reservations/{id}/reschedule', [ReservationController::class, 'reschedule']);
-Route::middleware('auth:api')->put('/tables/{id}/assign/{reservationId}', [TableController::class, 'assignTable']);
-Route::middleware('auth:api')->put('/tables/{id}/available', [TableController::class, 'unassignTable']);
+Route::middleware('auth:api')->put('/tables/{id}/assign/{reservationId}', [tablesController::class, 'assignTable']);
+Route::middleware('auth:api')->put('/tables/{id}/available', [tablesController::class, 'unassignTable']);
 Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
 Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
+
+Route::get('/table/all-tables', [tablesController::class, 'index']);
+Route::get('tables/available', [tablesController::class, 'availableTables']);
 
 // Routes APIs Reservations //
 Route::middleware('auth:api')->group(function () {

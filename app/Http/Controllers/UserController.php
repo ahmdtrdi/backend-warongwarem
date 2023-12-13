@@ -14,7 +14,7 @@ class UserController extends Controller {
     public function register(Request $request) {
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
-                'error' => 'Email already exists',
+                'error' => 'E-mail telah terdaftar',
             ], 422);
         }
 
