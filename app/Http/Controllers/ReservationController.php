@@ -35,23 +35,22 @@ class ReservationController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validatedData = $request->validate([
-        'user_id' => 'required|integer|exists:users,id', // Add this line
-        'name' => 'required|string',
-        'notes' => 'nullable|string',
-        'table_type' => 'required|string',
-        'people' => 'required|integer',
-        'time' => 'required|date_format:H:i:s',
-        'date' => 'required|date',
-        'phone_number' => 'required|string',
-    ]);
+    {
+        $reservation = new Reservation;
+        $reservation->name = $request->name;
+        $reservation->table_type = $request->table_type;
+        $reservation->people = $request->people;
+        $reservation->time = $request->time;
+        $reservation->date = $request->date;
+        $reservation->phone_number = $request->phone_number;
+        $reservation->user_id = $request->user_id;
+        $reservation->save();
 
-   
-    $validatedData['customer_id'] = $validatedData['user_id'];
-    $reservation = Reservation::create($validatedData);
-    return $reservation;
-}
+        return response()->json([
+            'message' => 'Reservation created successfully',
+            'reservation, 201' => $reservation
+        ]);
+    }
     public function delete(Reservation $reservation)
     {
         $reservation->delete();
