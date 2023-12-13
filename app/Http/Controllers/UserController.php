@@ -10,6 +10,12 @@ use App\Models\User;
 
 class UserController extends Controller {
     public function register(Request $request) {
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'error' => 'Email already exists',
+            ], 422);
+        }
+
         $user = new User;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
@@ -18,14 +24,16 @@ class UserController extends Controller {
         $roles = [1 => 'customer', 2 => 'waiter', 3 => 'manager'];
 
         // Set role from request data
-        $user->role = $roles[$request->role];
+        // $user->role = $roles[$request->role];
+        $user->role = $roles[$request->get('role', 1)];
 
         $user->save();
 
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
-            'role' => $roles[$request->role]
+            // 'role' => $roles[$request->role]
+            'role' => $roles[$request->get('role', 1)]
         ]);
     }
 
@@ -35,7 +43,7 @@ class UserController extends Controller {
         if(Auth::attempt($credentials)) {
             // Authentication passed...
             $user = Auth::user();
-            $token = $user->createToken('token-name')->plainTextToken;
+            $token = $user->createToken('token-name', [], now()->addDays(7));
 
             return response()->json([
                 'user' => $user,
