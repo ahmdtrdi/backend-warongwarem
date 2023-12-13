@@ -44,21 +44,22 @@ class UserController extends Controller {
         ]);
     }
 
-    public function login(Request $request) {
-        $credentials = $request->only('email', 'password');
+    public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-        if(Auth::attempt($credentials)) {
-            // Authentication passed...
-            $user = Auth::user();
-            $token = $user->createToken('token-name', [], now()->addDays(7));
-
-            return response()->json([
-                'user' => $user,
-                'token' => $token,
-            ]);
-        }
-
-        // Authentication failed...
+    if (!$token = auth()->attempt($credentials)) {
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
+
+    $user = Auth::user();
+
+    $token = $user->createToken('token')->plainTextToken;
+
+    $cookie = cookie('jwt', $token, 60 * 24); // 1 day  
+    
+    return response ([
+        'message' => 'success',
+    ])->withCookie($cookie);
+}
 }
