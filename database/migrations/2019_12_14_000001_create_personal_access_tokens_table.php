@@ -21,10 +21,6 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
-
-        Schema::table('personal_access_tokens', function (Blueprint $table) {
-            $table->timestamp('expires_at')->nullable();
-        });
     }
 
     /**
