@@ -13,7 +13,9 @@ class TableListSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('table_list')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         for ($i = 1; $i <= 15; $i++) {
             $type = '';
@@ -28,7 +30,7 @@ class TableListSeeder extends Seeder
             }
 
             DB::table('table_list')->insert([
-                'id' => $i,
+                'table_id' => $i,
                 'type' => $type,
                 'capacity' => $capacity,
                 'on_used' => false,

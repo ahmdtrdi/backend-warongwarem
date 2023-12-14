@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('phone_number');
             $table->string('status')->default('unpaid');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('table_id')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('user_id')->on('users');

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Reservation;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Validation\ValidationException;
+
+use App\Models\Table;
 
 class ReservationController extends Controller
 {
@@ -18,10 +21,18 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $reservation = Reservation::find($id);
-        return $reservation;
+        $status = $request->input('status');
+        $reservations = Reservation::where('status', $status)->get();
+        return response()->json($reservations);
+    }
+
+    public function showByDate(Request $request)
+    {
+        $date = $request->input('date');
+        $reservations = Reservation::where('date', $date)->get();
+        return response()->json($reservations);
     }
 
     public function userReservations(Request $request)
@@ -36,16 +47,19 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
-        var_dump("halo daseng");
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'notes' => 'nullable|string',
-            'table_type' => 'required|string',
-            'people' => 'required|integer',
-            'time' => 'required|date_format:H:i:s',
-            'date' => 'required|date',
-            'phone_number' => 'required|string',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string',
+                'notes' => 'nullable|string',
+                'table_type' => 'required|string',
+                'people' => 'required|integer',
+                'time' => 'required|date_format:H:i:s',
+                'date' => 'required|date',
+                'phone_number' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json($e->errors(), 400);
+        }
 
         $user = null;
 
@@ -55,7 +69,9 @@ class ReservationController extends Controller
 
             // Attempt to authenticate the user using the JWT token
             try {
+                Log::info('JWT token: ' . $token);
                 $user = JWTAuth::parseToken()->authenticate();
+                Log::info('Authenticated user: ' . json_encode($user));
             } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
                 // Handle JWT exceptions here (e.g., token expired, invalid token)
                 return response()->json(['error' => 'Invalid token'], 401);
@@ -63,11 +79,13 @@ class ReservationController extends Controller
         }
 
         if ($user) {
-            $validatedData['customer_id'] = $user->id;
+            $validatedData['user_id'] = $user->id;
+            Log::info('validatedData after adding user_id: ' . json_encode($validatedData));
             $reservation = Reservation::create($validatedData);
-            return $reservation;
+            return response()->json($reservation, 201);
         } else {
             // Handle the case where no user is authenticated
+            Log::info('No user authenticated');
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
     }
@@ -143,6 +161,36 @@ class ReservationController extends Controller
             }
         } else {
             return response()->json(['error' => 'Hanya manajer yang dapat mereschedule reservasi'], 403);
+        }
+    }
+
+    public function acceptReservation(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            // Include all the fields that need to be validated
+        ]);
+
+        // Retrieve the table
+        $table = Table::find($request->input('table_id'));
+
+        // Check if the table is available
+        if ($table->on_used == 0) {
+            // Update the on_used field to 1
+            $table->on_used = 1;
+            $table->save();
+
+            // Add the table_id to the validated data
+            $validatedData['table_id'] = $table->table_id;
+
+            // Create the reservation
+            $reservation = Reservation::create($validatedData);
+
+            // Return a success message
+            return response()->json(['message' => 'Reservation created successfully', 'reservation' => $reservation]);
+        } else {
+            // Return an error message
+            return response()->json(['error' => 'Table is not available'], 400);
         }
     }
 }
