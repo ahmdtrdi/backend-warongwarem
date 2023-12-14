@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             // UsersSeeder::class,
             // ReservationsSeeder::class,
             UsersReservationsSeeder::class,
-            TableListSeeder::class,
+            // TableListSeeder::class,
         ]);
 
     }
