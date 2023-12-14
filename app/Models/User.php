@@ -57,11 +57,11 @@ class User extends Authenticatable implements JWTSubject {
      *
      * @return string
      */
-    /*
+    
     public function getAuthIdentifierName() {
         return 'user_id';
     }
-    */
+    
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

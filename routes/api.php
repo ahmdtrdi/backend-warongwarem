@@ -19,7 +19,7 @@ use App\Http\Controllers\tablesController;
 */
 
 // Routes APIs with middleware secure //
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware('auth:api')->get('/user/reservations', [ReservationController::class, 'userReservations']);
@@ -36,8 +36,6 @@ Route::get('/table/all-tables', [tablesController::class, 'index']);
 Route::get('tables/available', [tablesController::class, 'availableTables']);
 
 // Routes APIs Reservations //
-Route::middleware('auth:api')->group(function () {
-    Route::get('/reservations/list', [ReservationController::class, 'index']);
-    Route::get('/reservations/{id}', [ReservationController::class, 'show']);
-    Route::post('/reservations', [ReservationController::class, 'store']);
-});
+Route::get('/reservations/list', [ReservationController::class, 'index']);
+Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+Route::post('/reservations', [ReservationController::class, 'store']);
