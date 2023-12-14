@@ -29,13 +29,17 @@ Route::middleware('auth:api')->put('/reservations/{id}/status', [ReservationCont
 Route::middleware('auth:api')->put('/reservations/{id}/reschedule', [ReservationController::class, 'reschedule']);
 Route::middleware('auth:api')->put('/tables/{id}/assign/{reservationId}', [tablesController::class, 'assignTable']);
 Route::middleware('auth:api')->put('/tables/{id}/available', [tablesController::class, 'unassignTable']);
-Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
-Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
 
 Route::get('/table/all-tables', [tablesController::class, 'index']);
 Route::get('tables/available', [tablesController::class, 'availableTables']);
 
 // Routes APIs Reservations //
-Route::get('/reservations/list', [ReservationController::class, 'index']);
-Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+
+
+//APIs ready to use
+Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
+Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/reservations', [ReservationController::class, 'store']);
+Route::get('/reservations/list', [ReservationController::class, 'index']);
+Route::get('/reservations/status', [ReservationController::class, 'show']);
+Route::get('/reservations/date', [ReservationController::class, 'showByDate']);

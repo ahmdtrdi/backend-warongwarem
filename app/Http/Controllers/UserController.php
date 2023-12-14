@@ -51,8 +51,7 @@ class UserController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $token = auth()->attempt($credentials);
-        if ($token === false) {
+        if(!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);
