@@ -36,6 +36,7 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
+        var_dump("halo daseng");
         $validatedData = $request->validate([
             'name' => 'required|string',
             'notes' => 'nullable|string',
