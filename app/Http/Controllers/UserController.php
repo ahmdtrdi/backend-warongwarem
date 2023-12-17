@@ -39,10 +39,16 @@ class UserController extends Controller
         $user->role = $roles[$role];
         $user->save();
 
+        // Generate a token for the new user
+        $token = JWTAuth::fromUser($user);
+
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
-            'role' => $roles[$role]
+            'role' => $roles[$role],
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
     }
 
@@ -51,7 +57,7 @@ class UserController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if(!$token = JWTAuth::attempt($credentials)) {
+        if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);
@@ -62,7 +68,7 @@ class UserController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
     }
 
