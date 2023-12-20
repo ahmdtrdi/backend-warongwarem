@@ -4,8 +4,12 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Token;
+use Illuminate\Support\Facades\Log;
 
-class Authenticate extends Middleware {
+class Authenticate extends Middleware
+{
     /**
      * Handle an incoming request.
      *
@@ -16,12 +20,19 @@ class Authenticate extends Middleware {
      */
     public function handle($request, \Closure $next, ...$guards)
     {
-        if ($this->authenticate($request, $guards) && $request->user()->tokenCan('token-name') && now()->lessThan($request->user()->token()->expires_at)) {
-            return $next($request);
+        try {
+            $this->authenticate($request, $guards);
+        } catch (\Exception $e) {
+            $user = auth()->user();
+            if ($user) {
+                Log::info('Authenticated user: ', ['id' => $user->id, 'name' => $user->name]);
+            } else {
+                Log::info('No authenticated user', []); // Add an empty array as the second argument
+            }
+            throw $e;
         }
 
-        if($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
+        // Continue processing the request
+        return $next($request);
     }
 }

@@ -39,7 +39,9 @@ Route::get('tables/available', [tablesController::class, 'availableTables']);
 //APIs ready to use
 Route::post('/auth/register', [UserController::class, 'register'])->middleware('throttle:10,1');
 Route::post('/auth/login', [UserController::class, 'login'])->middleware('throttle:10,1');
-Route::post('/reservations', [ReservationController::class, 'store']);
+Route::middleware('auth:api')->group(function () {
+    Route::post('/reservations', [ReservationController::class, 'store']);
+});
 Route::get('/reservations/list', [ReservationController::class, 'index']);
 Route::get('/reservations/status', [ReservationController::class, 'show']);
 Route::get('/reservations/date', [ReservationController::class, 'showByDate']);
