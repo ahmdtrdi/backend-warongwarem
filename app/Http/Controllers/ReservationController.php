@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Validation\ValidationException;
 
 use App\Models\Table;
+use App\Models\User;
 
 class ReservationController extends Controller
 {
@@ -47,6 +48,9 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Request: ', $request->all());
+        Log::info('Authenticated user: ', auth()->user());
+
         try {
             $validatedData = $request->validate([
                 'name' => 'required|string',
@@ -61,25 +65,46 @@ class ReservationController extends Controller
             return response()->json($e->errors(), 400);
         }
 
-        $user = null;
+        /*
+        $userId = null;
 
         // Check for JWT token in the request headers
         if ($token = $request->header('Authorization')) {
             $token = str_replace('Bearer ', '', $token);
 
-            // Attempt to authenticate the user using the JWT token
+            // Get the payload of the token
             try {
-                Log::info('JWT token: ' . $token);
-                $user = JWTAuth::parseToken()->authenticate();
-                Log::info('Authenticated user: ' . json_encode($user));
+                $payload = JWTAuth::getPayload($token);
+
+                // Get the 'sub' claim from the payload
+                $userId = $payload['sub'];
             } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
                 // Handle JWT exceptions here (e.g., token expired, invalid token)
+                Log::error('JWTException: ' . $e->getMessage());
                 return response()->json(['error' => 'Invalid token'], 401);
             }
         }
 
+        if ($userId) {
+            $validatedData['user_id'] = $userId;
+            Log::info('validatedData after adding user_id: ' . json_encode($validatedData));
+            $reservation = Reservation::create($validatedData);
+            return response()->json($reservation, 201);
+        } else {
+            // Handle the case where no user is authenticated
+            Log::info('No user authenticated');
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+        */
+
+        $user = auth()->user();
+        Log::info('User: ' . json_encode($user));
+
+        $token = $request->header('Authorization');
+        Log::info('Token: ' . $token);
+
         if ($user) {
-            $validatedData['user_id'] = $user->id;
+            $validatedData['user_id'] = $user->user_id;
             Log::info('validatedData after adding user_id: ' . json_encode($validatedData));
             $reservation = Reservation::create($validatedData);
             return response()->json($reservation, 201);
